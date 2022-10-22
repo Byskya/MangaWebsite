@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>阅读页面</title>
+    <link rel="stylesheet" href="../css/fycj.css">
+</head>
+<body>
+
+<!--<div class="frame-pic">-->
+<!--    <div class="panel-pic">-->
+<!--        <div class="title-box">-->
+<!--            <h3 class="manga-title">漫画阅读页面</h3>-->
+<!--        </div>-->
+<!--        <div id="manga-content">-->
+<!--            <div class="col-md-12">-->
+<!--                <div class="col-md-3"><img src="../images/portal/saop/collect.jpg" width="60%" /></div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div id="navigate">-->
+<!--            <input id="prePage" type="button" value="上一页">-->
+<!--            <input id="nextPage" type="button" value="下一页">-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<div class="page">
+</div>
+
+<script type="text/javascript" src="../js/jquery-1.9.1.min.js"></script>
+<script src="../js/fycj.js"></script>
+<script type="text/javascript" src="../js/vue.js"></script>
+<script type="text/javascript">
+    var page =1;
+    $('.page').create({
+        pageCount:20,//总页数
+        current:1,//当前页码
+
+        backFn:function(p){
+            alert("chekc:"+p);
+            // var num = page++;
+            var num = p;
+            // alert(num);
+            var num_str = num.toString();
+            var pics = $.data(document.body, 'manga');
+            // $.removeData(document.body, 'manga');
+            var html = '<div class="col-md-12">'
+                + '<div class="col-md-3"><img src="..#{image}#{page}.jpg" width="80%" /></div>'
+                + '</div>';
+            html = html.replace(/#{image}/g, pics.image);
+            html = html.replace(/#{page}/g, num_str);
+
+
+            $('.page').append(html);
+        }//回调函数
+    })
+
+</script>
+<!--获取当前链接中的id值-->
+<script type="text/javascript">
+    window.location.href;
+    function getUrlParam(name)
+    {
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r!=null)
+            return unescape(r[2]);
+
+        return null; //返回参数值
+    }
+    (function($){
+        $.getUrlParam = function(name)
+        {
+            var reg = new RegExp("(^|&)" + name +"=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if (r!=null)
+                return unescape(r[2]);
+
+            return null;
+        }
+    })(jQuery);
+</script>
+<script type="text/javascript">
+    var id;
+    $(document).ready(function(){
+        id = $.getUrlParam("id");
+        console.log("id=" + id);
+
+        $.ajax({
+            "url":"/goods/read/" + id,
+            "type":"GET",
+            "dataType":"json",
+            "success":function(json) {
+                if (json.state == 200) {
+                    var manga = json.data;
+                    $.data(document.body, 'manga', manga);
+                    var html2 = '<div class="col-md-12">'
+                        + '<div class="col-md-3"><img src="..#{image}collect.jpg" width="80%" /></div>'
+                        + '</div>';
+                    html2 = html2.replace(/#{image}/g, json.data.image);
+                    $('.page').append(html2);
+                    // 将服务器响应的数据显示到页面中
+                    // $("#goods-title").html(json.data.title);
+                    // $("#goods-price").html(json.data.price);
+                    // $("#goods-sell-point").html(json.data.sellPoint);
+                    //
+                    // $("#goods-image-1-big").attr("src", ".." + json.data.image + "1_big.png");
+                    // $("#goods-image-2-big").attr("src", ".." + json.data.image + "2_big.png");
+                    // $("#goods-image-3-big").attr("src", ".." + json.data.image + "3_big.png");
+                    // $("#goods-image-4-big").attr("src", ".." + json.data.image + "4_big.png");
+                    // $("#goods-image-5-big").attr("src", ".." + json.data.image + "5_big.png");
+                    //
+                    // $("#goods-image-1-small").attr("src", ".." + json.data.image + "1.jpg");
+                    // $("#goods-image-2-small").attr("src", ".." + json.data.image + "2.jpg");
+                    // $("#goods-image-3-small").attr("src", ".." + json.data.image + "3.jpg");
+                    // $("#goods-image-4-small").attr("src", ".." + json.data.image + "4.jpg");
+                    // $("#goods-image-5-small").attr("src", ".." + json.data.image + "5.jpg");
+                } else {
+                    alert(json.message);
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

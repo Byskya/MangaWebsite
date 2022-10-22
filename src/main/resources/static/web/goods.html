@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        #navigate{
+            position: absolute;
+            top: 95%;
+            right: 46%;
+        }
+        .search{
+            float: right;
+            height: 35px;
+        }
+        .search .input1{
+            height:99%;
+            border-top:0px;
+            border-left:0px;
+            border-right:3px;
+            border-bottom:0px;
+        }
+        .search .input2{
+            height:112%;
+            border-top:0px;
+            border-left:0px;
+            border-right:3px;
+            border-bottom:0px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div style="width: 5px;height: 5px; float: right"></div>
+    <div class="search">
+        <input class="input1" id="content-search" type="text" name="search"/>
+        <input class="input2" type="button" id="btn-search" value="搜索">
+    </div>
+
+</header>
+<nav>
+    <a href="" style="color: #ff6700;
+    border-bottom: 3px solid #ff6700;">作品集</a>
+    <!-- 这样有一个此时在这个页面的感觉 -->
+    <a href="category.html">作品分类</a>
+</nav>
+<div class="showcase" id="hot-goods-list">
+    <a href="">
+        <img src="cover.png" alt="">
+        <span>甜糖白桃</span>
+    </a>
+    <a href=""></a>
+</div>
+<div id="navigate">
+    <input id="prePage" type="button" value="上一页">
+    <input id="nextPage" type="button" value="下一页">
+</div>
+<footer></footer>
+<script type="text/javascript" src="../js/vue.js"></script>
+<script type="text/javascript" src="../js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript">
+    $("#btn-search").click(function (){
+        alert("search");
+        var goodsName = $("#content-search").val();
+        alert(goodsName);
+        location.href="searchResult.html?goodsName="+goodsName;
+    });
+    $("#btn-read").click(function() {
+        id = $.getUrlParam("id");
+        alert(id)
+        console.log(id);
+        location.href = "read.html?id=" + id;
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        showHotGoods(1);
+    });
+    $("#prePage").click(function (){
+        var preNum = $.data(document.body, 'prePage');
+        $.removeData(document.body, 'prePage');
+        showHotGoods(preNum);
+    });
+    $("#nextPage").click(function (){
+        var nextNum = $.data(document.body, 'nextPage');
+        $.removeData(document.body, 'nextPage');
+        showHotGoods(nextNum);
+    });
+    function showHotGoods(pageNum) {
+        $.ajax({
+            "url":"/goods/hot/"+pageNum,
+            "type":"GET",
+            "dataType":"json",
+
+            "success":function(json) {
+                if (json.state == 200) {
+                    var pageInfo = json.data;
+                    $("#hot-goods-list").empty();
+                    for (var i = 0; i < pageInfo.list.length; i++) {
+                        console.log(pageInfo.list[i].title);
+                        var html = '<a href="product.html?id=#{id}">' +
+                            '        <img src="..#{image}collect.jpg">' +
+                            '        <span>#{title}</span>' +
+                            '    </a>'
+
+                        html = html.replace(/#{id}/g, pageInfo.list[i].id);
+                        html = html.replace(/#{title}/g, pageInfo.list[i].title);
+                        html = html.replace(/#{image}/g, pageInfo.list[i].image);
+
+
+                        $("#hot-goods-list").append(html);
+
+                    }
+                    // var html2 = '<a href="/goods/hot/#{prePage}">上一页</a>' +
+                    //     '<a href="/goods/hot/#{nextPage}">下一页</a>';
+                    // html2 = html2.replace(/#{prePage}/g,pageInfo.PrePage);
+                    // html2 = html2.replace(/#{nextPage}/g,pageInfo.nextPage);
+                    // $("#navigate").append(html2);
+                    console.log("分页数据"+pageInfo.prePage);
+                    console.log("分页数据"+pageInfo.nextPage);
+                    // store
+                    $.data(document.body, 'prePage', pageInfo.prePage);
+                    $.data(document.body, 'nextPage', pageInfo.nextPage);
+
+
+                } else {
+                    alert(json.message);
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../css/index_work.css">
+</head>
+<body>
+管理页面
+
+<table id="hot-goods-list">
+    <tr>
+        <th colspan="6">员工列表</th>
+    </tr>
+    <tr>
+        <th>流水号</th>
+        <th>员工姓名</th>
+        <th>年龄</th>
+        <th>性别</th>
+        <th>邮箱</th>
+        <th>操作</th>
+    </tr>
+<!--    <tr th:each="employee,status:${page.list}">-->
+<!--        <td th:text="${status.count}"></td>-->
+<!--        <td th:text="${employee.empName}"></td>-->
+<!--        <td th:text="${employee.age}"></td>-->
+<!--        <td th:text="${employee.gender}"></td>-->
+<!--        <td th:text="${employee.email}"></td>-->
+<!--        <td>-->
+<!--            <a href="">删除</a>-->
+<!--            <a href="">修改</a>-->
+<!--        </td>-->
+<!--    </tr>-->
+<!--    <div style="text-align: center">-->
+<!--        <a th:if="${page.hasPreviousPage}" th:href="@{/employee/page/1}">首页</a>-->
+<!--        <a th:if="${page.hasPreviousPage}" th:href="@{'/employee/page/'+${page.PrePage}}">上一页</a>-->
+<!--        <span th:each="num:${page.navigatepageNums}">-->
+<!--            <a th:if="${page.pageNum==num}" style="color:red;" th:href="@{'/employee/page/'+${num}}" th:text="'['+${num}+']'"></a>-->
+<!--            <a th:if="${page.pageNum!=num}"  th:href="@{'/employee/page/'+${num}}" th:text="${num}"></a>-->
+<!--        </span>-->
+<!--        <a th:if="${page.hasNextPage}" th:href="@{'/employee/page/'+${page.nextPage}}">下一页</a>-->
+<!--        <a th:if="${page.hasNextPage}" th:href="@{'/employee/page/'+${page.pages}}">尾页</a>-->
+
+<!--    </div>-->
+</table>
+
+<div id="navigate">
+    <input id="prePage" type="button" value="上一页">
+    <input id="nextPage" type="button" value="下一页">
+</div>
+<script type="text/javascript" src="../js/vue.js"></script>
+<script type="text/javascript" src="../js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript">
+    $("#btn-search").click(function (){
+        alert("search");
+        var goodsName = $("#content-search").val();
+        alert(goodsName);
+        location.href="searchResult.html?goodsName="+goodsName;
+    });
+    $("#btn-read").click(function() {
+        id = $.getUrlParam("id");
+        alert(id)
+        console.log(id);
+        location.href = "read.html?id=" + id;
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        showHotGoods(1);
+    });
+    $("#prePage").click(function (){
+        var preNum = $.data(document.body, 'prePage');
+        $.removeData(document.body, 'prePage');
+        showHotGoods(preNum);
+    });
+    $("#nextPage").click(function (){
+        var nextNum = $.data(document.body, 'nextPage');
+        $.removeData(document.body, 'nextPage');
+        showHotGoods(nextNum);
+    });
+    function showHotGoods(pageNum) {
+        $.ajax({
+            "url":"/admin/get/alluser/"+pageNum,
+            "type":"GET",
+            "dataType":"json",
+
+            "success":function(json) {
+                if (json.state == 200) {
+                    var pageInfo = json.data;
+                    $("#hot-goods-list").empty();
+                    var html2 = '<tr>' +
+                        '        <th colspan="6">员工列表</th>' +
+                        '    </tr>' +
+                        '    <tr>' +
+                        '        <th>序号</th>' +
+                        '        <th>用户名</th>' +
+                        '        <th>密码</th>' +
+                        '        <th>电话号码</th>' +
+                        '        <th>邮箱</th>' +
+                        '        <th>操作</th>' +
+                        '    </tr>';
+                    $("#hot-goods-list").append(html2);
+                    for (var i = 0; i < pageInfo.list.length; i++) {
+                        console.log(pageInfo.list[i].username);
+                        // var html = '<div class="col-md-12">'
+                        //     + '<div class="col-md-7 text-row-2"><a href="product.html?id=#{id}">#{title}</a></div>'
+                        //     + '<div class="col-md-2">¥#{price}</div>'
+                        //     + '<div class="col-md-3"><img src="..#{image}collect.jpg" width="20%" /></div>'
+                        //     + '</div>';
+                        // var html = '<a href="product.html?id=#{id}">' +
+                        //     '        <img src="..#{image}collect.jpg">' +
+                        //     '        <span>#{title}</span>' +
+                        //     '    </a>';
+
+                        var html = '<tr>' +
+                            '        <td class="uid">#{id}</td>' +
+                            '        <td>#{username}</td>' +
+                            '        <td>#{password}</td>' +
+                            '        <td>#{phone}</td>' +
+                            '        <td>#{email}</td>' +
+                            '        <td>' +
+                            '            <a href="javascript:;" class="blockUser">拉黑</a>' +
+                            '            <a href="">修改</a>' +
+                            '        </td>' +
+                            '    </tr>';
+
+                        html = html.replace(/#{id}/g, pageInfo.list[i].uid);
+                        html = html.replace(/#{username}/g, pageInfo.list[i].username);
+                        html = html.replace(/#{password}/g, pageInfo.list[i].password);
+                        html = html.replace(/#{phone}/g,pageInfo.list[i].phone);
+                        html = html.replace(/#{email}/g,pageInfo.list[i].email);
+
+
+
+                        $("#hot-goods-list").append(html);
+
+                    }
+                    // var html2 = '<a href="/goods/hot/#{prePage}">上一页</a>' +
+                    //     '<a href="/goods/hot/#{nextPage}">下一页</a>';
+                    // html2 = html2.replace(/#{prePage}/g,pageInfo.PrePage);
+                    // html2 = html2.replace(/#{nextPage}/g,pageInfo.nextPage);
+                    // $("#navigate").append(html2);
+                    console.log("分页数据"+pageInfo.prePage);
+                    console.log("分页数据"+pageInfo.nextPage);
+                    // store
+                    $.data(document.body, 'prePage', pageInfo.prePage);
+                    $.data(document.body, 'nextPage', pageInfo.nextPage);
+
+
+                } else {
+                    alert(json.message);
+                }
+            }
+        });
+    }
+</script>
+<script type="text/javascript">
+    var userId;
+    $("#hot-goods-list").on("click",".blockUser",function(){
+        console.log("on 点击一次");
+        alert("已拉黑");
+        console.log($(this).parent().siblings('.uid').text(), 'ok')
+        userId = $(this).parent().siblings('.uid').text();
+        console.log("单行数据的id："+userId);
+        $.ajax({
+            "url":"/admin/update/block/"+userId,
+            "type":"POST",
+            "dataType":"json",
+            "success":function(json) {
+                if (json.state == 200) {
+                    alert("删除成功");
+                } else {
+                    alert("登录失败");
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

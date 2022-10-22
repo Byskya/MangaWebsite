@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta name="author" content="Kodinger">
+    <title>用户登录页面</title>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../js/login.css">
+    <script src="../js/index.js"></script>
+</head>
+<body>
+<section>
+    <div class="box">
+
+        <div class="form">
+            <img src="../images/index/wallpaper.jpg" class="user" alt="">
+            <h2>欢迎来到漫画之家</h2>
+            <form class="" id="form-login" enctype="multipart/form-data">
+                <!-- {% csrf_token %} -->
+                <div class="inputBx">
+                    <input type="text" name="username" placeholder="Username" id="username" oninput="validation()" required autofocus>
+                    <img src="../images/index/user.png" alt="">
+                </div>
+                <div class="inputBx">
+                    <input type="password" name="password" id="password" placeholder="Password" oninput="validation()" required>
+                    <img src="../images/index/lock.png" alt="">
+                </div>
+                <label class="remeber"><input type="checkbox"> 记住我</label>
+                <div class="inputBx">
+                    <input type="button" name="submit" value="登录" id="submit" disabled>
+                </div>
+            </form>
+            <p>忘记 <a href="#">密码</a>? </p>
+            <p>创建一个 <a href="register.html">用户</a>? </p>
+
+        </div>
+
+    </div>
+</section>
+
+<script type="text/javascript" src="../js/vue.js"></script>
+<script type="text/javascript" src="../js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="../js/axios.min.js"></script>
+<script type="text/javascript">
+    $("#submit").click(function(){
+        $.ajax({
+            "url":"/login",
+            "data":$("#form-login").serialize(),
+            "type":"POST",
+            "dataType":"json",
+            "success":function(json) {
+                if (json.state == 200) {
+                    location.href="userdata.html";
+                } else {
+                    alert(json.message);
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

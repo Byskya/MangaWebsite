@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../css/style2.css" />
+    <link
+            rel="shortcut icon"
+            href="../images/img/favicon-32x32.png"
+            type="image/x-icon"
+    />
+    <style>
+        .col-md-6{
+
+        }
+        .comment{
+
+        }
+    </style>
+
+</head>
+<body>
+<!--商品信息展示开始-->
+<div class="product">
+    <main>
+        <section class="container">
+
+            <div class="col-md-6" id="goods-images">
+
+                <div data="1" class="img-big move-img col-md-12">
+                    <img id="goods-image-1-big" src="../images/portal/11DELLran7000R1605Ssilvery/1_big.png" width="30%" />
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <h3 id="goods-title" class="col-md-12 title-row-1">戴尔Dell 燃700R1605银色</h3>
+                <h4 class="col-md-12 text-row-1"><small id="goods-sell-point">仅上海，广州，沈阳仓有货！预购从速！</small></h4>
+                <form class="form-inline product-form col-md-12" role="form">
+
+                    <div class="col-md-12 form-space">
+
+                        <input id="btn-read" class="btn btn-primary btn-lg btn-block" type="button" value="阅读漫画">
+
+                    </div>
+
+                    <div class="col-md-12 form-space">
+
+
+                        <button id="btn-collect" type="button" class="btn btn-default"><span class="fa fa-heart-o"></span> 加入收藏</button>
+
+                    </div>
+                </form>
+
+            </div>
+        </section>
+
+    </main>
+
+</div>
+<div class="comment">
+    <main>
+        <section class="container" id="container">
+            <div class="chat chat-1">
+                <div class="counter couter-1">
+                    <p><img src="../images/img/icon-plus.svg" /></p>
+                    <p> 0 </p>
+                    <p><img src="../images/img/icon-minus.svg" /></p>
+                </div>
+                <div id="commentObj" class="avt-name-com avat-name1">
+                    <p class="title">
+                        <img src="../images/img/avatars/image-amyrobson.png" />
+                        <span class="id name"> 阅读者one</span>
+                        <span class="id dates">2022-10-20</span>
+                    </p>
+                    <p class="comment comment-1">
+                        噢！我的上帝，这实在是太厉害了，我相信这一定是上帝的安排。
+                    </p>
+                </div>
+                <div class="reply reply1">
+                    <span class="reply"><img src="../images/img/icon-reply.svg" /></span>
+                </div>
+            </div>
+            <form id="form-comment" class="replied comments chat">
+                <img src="../images/img/avatars/image-juliusomo.png" />
+                <textarea placeholder="Add a comment..." name="content"></textarea>
+                <input class="btn-send" type="button" value="发送"/>
+            </form>
+        </section>
+    </main>
+</div>
+<!--商品信息展示结束-->
+<script type="text/javascript" src="../js/vue.js"></script>
+<script type="text/javascript" src="../js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript">
+    var gid;
+    $(document).ready(function(){
+        showHotGoods();
+    });
+    function showHotGoods() {
+        gid = $.getUrlParam("id");
+        console.log("id=" + gid);
+        $.ajax({
+            "url":"/get/all/comment/"+gid,
+            "type":"GET",
+            "dataType":"json",
+            "success":function(json) {
+                if (json.state == 200) {
+                    var pageInfo = json.data;
+                    $("#container").empty();
+                    var html2 = '<form id="form-comment" class="replied comments chat">\n' +
+                        '                <img src="#{avatarnow}" width="10%" />\n' +
+                        '                <textarea placeholder="Add a comment..." name="content"></textarea>\n' +
+                        '                <input class="btn-send" type="button" value="发送"/>\n' +
+                        '            </form>';
+                    html2 = html2.replace(/#{avatarnow}/g, json.message);
+                    $("#container").append(html2);
+                    for (var i = 0; i < pageInfo.length; i++) {
+                        console.log(pageInfo.username);
+                        // var html = '<a href="product.html?id=#{id}">' +
+                        //     '        <img src="..#{image}collect.jpg">' +
+                        //     '        <span>#{title}</span>' +
+                        //     '    </a>'
+                        var html = '<div class="chat chat-1">\n' +
+                            '                <div class="counter couter-1">\n' +
+                            '                    <p><img src="../images/img/icon-plus.svg" /></p>\n' +
+                            '                    <p> 0 </p>\n' +
+                            '                    <p><img src="../images/img/icon-minus.svg" /></p>\n' +
+                            '                </div>\n' +
+                            '                <div id="commentObj" class="avt-name-com avat-name1">\n' +
+                            '                    <p class="title">\n' +
+                            '                        <img src="#{avatar}" width="10%" />\n' +
+                            '                        <span class="id name"> #{username}</span>\n' +
+                            '                        <span class="id dates">#{createTime}</span>\n' +
+                            '                    </p>\n' +
+                            '                    <p class="comment comment-1">\n' +
+                            '                        #{comment}\n' +
+                            '                    </p>\n' +
+                            '                </div>\n' +
+                            '                <div class="reply reply1">\n' +
+                            '                    <span class="reply"><img src="../images/img/icon-reply.svg" /></span>\n' +
+                            '                </div>\n' +
+                            '            </div>';
+
+                        html = html.replace(/#{avatar}/g, pageInfo[i].avatar);
+                        html = html.replace(/#{username}/g, pageInfo[i].username);
+                        html = html.replace(/#{createTime}/g, "2022");
+                        html = html.replace(/#{comment}/g, pageInfo[i].content);
+
+
+
+                        $("#container").append(html);
+
+
+                    }
+
+                } else {
+                    alert(json.message);
+                }
+            }
+        });
+    }
+</script>
+<script type="text/javascript">
+    window.location.href;
+    function getUrlParam(name)
+    {
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r!=null)
+            return unescape(r[2]);
+
+        return null; //返回参数值
+    }
+    (function($){
+        $.getUrlParam = function(name)
+        {
+            var reg = new RegExp("(^|&)" + name +"=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if (r!=null)
+                return unescape(r[2]);
+
+            return null;
+        }
+    })(jQuery);
+</script>
+
+<script type="text/javascript">
+    var id;
+    $("#container").on("click",".btn-send",function(){
+        id = $.getUrlParam("id");
+        console.log("id=" + id);
+        $.ajax({
+            "url":"/users/comment/"+id,
+            "data":$("#form-comment").serialize(),
+            "type":"POST",
+            "dataType":"json",
+            "success":function(json) {
+                if (json.state == 200) {
+
+                    alert("信息发送成功");
+                } else {
+                    alert(json.message);
+                }
+            }
+        });
+    });
+
+</script>
+<script type="text/javascript">
+    var id;
+    $(document).ready(function(){
+        id = $.getUrlParam("id");
+        console.log("id=" + id);
+
+        $.ajax({
+            "url":"/goods/" + id + "/details",
+            "type":"GET",
+            "dataType":"json",
+            "success":function(json) {
+                if (json.state == 200) {
+                    // 将服务器响应的数据显示到页面中
+                    $("#goods-title").html(json.data.title);
+                    $("#goods-sell-point").html(json.data.sellPoint);
+
+                    $("#goods-image-1-big").attr("src", ".." + json.data.image + "collect.jpg");
+                } else {
+                    alert(json.message);
+                }
+            }
+        });
+    });
+
+    $("#btn-collect").click(function(){
+        $.ajax({
+            "url":"/goods/collect",
+            "data":"goodsId=" + id ,
+            "type":"POST",
+            "dataType":"json",
+            "success":function(json) {
+                if (json.state == 200) {
+                    alert("添加成功！");
+                } else {
+                    alert(json.message);
+                }
+            },
+            "error":function() {
+                alert("您还没有登录，或登录信息已经过期，请重新登录！");
+                location.href = "login.html";
+            }
+        });
+    });
+
+    $("#btn-read").click(function() {
+        id = $.getUrlParam("id");
+        console.log(id);
+        location.href = "read.html?id=" + id;
+    });
+</script>
+</body>
+</html>

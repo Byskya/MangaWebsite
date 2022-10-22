@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Title</title>
+    <script src="../bootstrap3/js/holder.js"></script>
+    <link href="../bootstrap3/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <script src="../bootstrap3/jquery-1.9.1.min.js"></script>
+    <script src="../bootstrap3/js/bootstrap.js"></script>
+    <!-- 字体图标 -->
+    <link rel="stylesheet" href="../bootstrap3/font-awesome-4.7.0/css/font-awesome.css" />
+    <link rel="stylesheet" href="../js/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+</head>
+<!--<body>-->
+<!--<table class="cart-table" width="100%">-->
+<!--    <thead>-->
+<!--    <tr>-->
+<!--        <th width="8%">商品id</th>-->
+<!--        <th width="110"></th>-->
+<!--        <th width="29%">商品</th>-->
+<!--        <th>操作</th>-->
+<!--    </tr>-->
+<!--    </thead>-->
+<!--    <tbody id="cart-list" class="cart-body">-->
+<!--    <tr>-->
+<!--        <td>-->
+<!--            <input type="checkbox" class="ckitem" />-->
+<!--        </td>-->
+<!--        <td><img src="../images/portal/12DELLXPS13-silvery/collect.png" width="110" /></td>-->
+<!--        <td>联想(Lenovo)小新Air13 Pro 13.3英寸14.8mm超轻薄笔记本电脑</td>-->
+<!--        <td>¥<span id="goodsPrice1">5298</span></td>-->
+<!--        <td>-->
+<!--            <input type="button" value="-" class="num-btn" onclick="reduceNum(1)" />-->
+<!--            <input id="goodsCount1" type="text" size="2" readonly="readonly" class="num-text" value="1">-->
+<!--            <input class="num-btn" type="button" value="+" onclick="addNum(1)" />-->
+<!--        </td>-->
+<!--        <td><span id="goodsCast1"></span></td>-->
+<!--        <td><input type="button" onclick="delCartItem(this)" class="cart-del btn btn-default btn-xs" value="删除"/></td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--</table>-->
+<body>
+<section class="container">
+    <form>
+        <i class="fas fa-search"></i>
+        <input type="text" name="" id="search-item" placeholder="藏品搜索" onkeyup="search()">
+    </form>
+
+    <div class="product-list" id="product-list">
+        <div class="product">
+            <img src="https://rukminim1.flixcart.com/image/495/594/xif0q/t-shirt/3/t/y/3xl-brdrnful-z55-blive-original-imagg4dvtqngeghz.jpeg?q=50" alt="loading">
+            <div class="p-details">
+                <h2>Graphic Print Men Crew Neck Red T-Shirt</h2>
+                <h3>₹250</h3>
+            </div>
+        </div>
+    </div>
+</section>
+<script type="text/javascript" src="../js/vue.js"></script>
+<script type="text/javascript" src="../js/jquery-1.9.1.min.js"></script>
+<script src="../js/app.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        showCartList();
+    });
+
+    function showCartList() {
+        $.ajax({
+            "url":"/goods/",
+            "type":"GET",
+            "dataType":"json",
+            "success":function(json) {
+                if (json.state == 200) {
+                    var list = json.data;
+                    $("#product-list").empty();
+                    for (var i = 0; i < list.length; i++) {
+                        console.log(list[i].title);
+                        // var html = '<tr>'
+                        //     + '<td class="goodsId">#{goodsId}</td>'
+                        //     + '<td><img src="..#{image}collect.jpg" width="110" /></td>'
+                        //     + '<td class="goodsName">#{title}</td>'
+                        //     + '<td><input type="button" class="collection-del btn btn-default btn-xs" value="删除"/>' +
+                        //     '' +
+                        //     '</td>'
+                        //     + '</tr>';
+                        // var html = '<div class="product">' +
+                        //     '            <img src="..#{image}collect.jpg" alt="loading">' +
+                        //     '            <div class="p-details">' +
+                        //     '                <h3 class="goodsId">#{goodsId}</h3>' +
+                        //     '                <h2 class="goodsName">#{title}</h2>' +
+                        //     '                <input type="button" class="collection-del btn btn-default btn-xs" value="删除"/>' +
+                        //     '            </div>' +
+                        //     '        </div>';
+                        var html = '<div class="product">\n' +
+                            '            <img src="..#{image}collect.jpg" alt="loading">\n' +
+                            '            <div class="p-details">\n' +
+                            '                <h3 class="goodsId">#{goodsId}</h3>\n' +
+                            '                <h2 class="goodsName">#{title}</h2>\n' +
+                            '                <input type="button" class="collection-del btn btn-default btn-xs" value="删除"/>\n' +
+                            '            </div>\n' +
+                            '        </div>';
+                        html = html.replace(/#{goodsId}/g, list[i].id);
+                        html = html.replace(/#{image}/g, list[i].image);
+                        html = html.replace(/#{title}/g, list[i].title);
+
+                        $("#product-list").append(html);
+
+                    }
+                } else {
+                    alert(json.message);
+                }
+            }
+        });
+    }
+
+</script>
+<script type="text/javascript">
+    var goodsId;
+    $("#product-list").on("click",".collection-del",function(){
+        console.log("on 点击一次");
+        // console.log($(this).parent().siblings('.goodsId').text(), 'ok')
+        // goodsId = $(this).parent().siblings('.goodsId').text();
+        goodsId = $(this).parent().children(".goodsId").text();
+        console.log("单行数据的id："+goodsId);
+        $.ajax({
+            "url":"/goods/collection/delete/"+goodsId,
+            "type":"POST",
+            "dataType":"json",
+            "success":function(json) {
+                if (json.state == 200) {
+                    alert("删除成功");
+                } else {
+                    alert("登录失败");
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

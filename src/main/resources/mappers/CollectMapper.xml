@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pratice.shopcar.mappers.CollectMapper">
+    <insert id="insert">
+        insert into collection(uid, goods_id, created_user, created_time, modified_user, modified_time) values (#{uid},#{goodsId},#{createdUser},#{createdTime},#{modifiedUser},#{modifiedTime})
+    </insert>
+    <select id="findAllCollectionsByUid" resultType="com.pratice.shopcar.pojo.Collection">
+        select goods_id as GoodsId from collection where uid = #{uid}
+    </select>
+    <delete id="deleteCollection">
+        delete from collection
+        where goods_id = #{id}
+    </delete>
+</mapper>

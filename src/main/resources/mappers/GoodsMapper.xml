@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pratice.shopcar.mappers.GoodsMapper">
+    <select id="findHotGoods" resultType="com.pratice.shopcar.pojo.Goods">
+        SELECT
+            id, title, price, image
+        FROM
+            t_goods
+    </select>
+    <!-- 根据id查询商品详情 -->
+    <!-- Goods findById(Long id) -->
+    <select id="findById" resultType="com.pratice.shopcar.pojo.Goods">
+        SELECT
+            image, title,
+            sell_point AS sellPoint,
+            price, num,
+            status
+        FROM
+            t_goods
+        WHERE
+            id=#{id}
+    </select>
+    <select id="findAllById" resultType="com.pratice.shopcar.pojo.Goods">
+        select image, title,
+               sell_point AS sellPoint,
+               price, num,
+               status
+        from
+            t_goods
+        where
+            id = #{GoodsId}
+    </select>
+    <select id="findLikeName" resultType="com.pratice.shopcar.pojo.Goods">
+        select image,title,
+               sell_point AS sellPoint,
+               price, num,
+               status
+        from
+            t_goods
+        where title like  "%"#{goodsName}"%"
+    </select>
+    <select id="findByGoodsName" resultType="com.pratice.shopcar.pojo.Goods">
+        select id, title, price, image from t_goods where title = #{goodsName}
+    </select>
+    <select id="findGoodsCategory" resultType="com.pratice.shopcar.pojo.Goods">
+        select id, title ,sell_point AS sellPoint, price, image from t_goods where category_id = #{categoryId}
+    </select>
+</mapper>
